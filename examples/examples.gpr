@@ -1,0 +1,26 @@
+--  Built with Alire from this directory:  alr build
+--  libav_ada.gpr is found through the pin in alire.toml.
+
+with "config/libav_ada_examples_config.gpr";
+with "libav_ada.gpr";
+
+project Examples is
+
+   for Source_Dirs use ("src", "config");
+   for Object_Dir use "obj/" & Libav_Ada_Examples_Config.Build_Profile;
+   for Exec_Dir use "bin";
+   for Create_Missing_Dirs use "True";
+   for Main use ("probe.adb", "dump_frame.adb", "decode_all.adb", "seek_check.adb");
+
+   package Compiler is
+      --  -gnata keeps the library's preconditions checked in every profile:
+      --  the examples are there to show misuse being caught.
+      for Default_Switches ("Ada") use
+        Libav_Ada_Examples_Config.Ada_Compiler_Switches & ("-gnata");
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
+
+end Examples;

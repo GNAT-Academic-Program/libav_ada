@@ -1,0 +1,26 @@
+name = "libav_ada_examples"
+description = "Runnable examples for the libav_ada crate"
+version = "0.1.0"
+
+authors = ["Olivier Henley"]
+maintainers = ["Olivier Henley <henley@adacore.com>"]
+maintainers-logins = ["ohenley"]
+licenses = "Apache-2.0"
+website = "https://github.com/GNAT-Academic-Program/libav_ada"
+tags = ["ffmpeg", "libav", "video", "examples"]
+
+project-files = ["examples.gpr"]
+executables = ["probe", "dump_frame", "decode_all", "seek_check"]
+
+[[depends-on]]
+libav_ada = "*"
+
+# Use the library from the parent directory, not from the Alire index.
+[[pins]]
+libav_ada = { path = ".." }
+
+[build-switches]
+"*".style_checks = "no"
+development.ada_version = "Ada2022"
+validation.ada_version = "Ada2022"
+release.ada_version = "Ada2022"

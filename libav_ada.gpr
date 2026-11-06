@@ -1,0 +1,51 @@
+with "config/libav_ada_config.gpr";
+
+library project Libav_Ada is
+
+   for Library_Name use "libav_ada";
+   for Library_Version use
+     Project'Library_Name & ".so." & Libav_Ada_Config.Crate_Version;
+
+   for Source_Dirs use ("src/", "src/c/", "config/");
+   for Object_Dir use "obj/" & Libav_Ada_Config.Build_Profile;
+   for Create_Missing_Dirs use "True";
+   for Library_Dir use "lib";
+   for Languages use ("Ada", "C");
+
+   type Library_Type_Type is ("relocatable", "static", "static-pic");
+   Library_Type : Library_Type_Type :=
+     external ("LIBAV_ADA_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
+   for Library_Kind use Library_Type;
+
+   --  Where the FFmpeg headers and libraries live when they are not on the
+   --  default search path (Windows, or a custom build on Linux/macOS).
+   --  The default "." is a no-op: the system installation is used.
+   Include_Dir := external ("LIBAV_INCLUDE_DIR", ".");
+   Lib_Dir     := external ("LIBAV_LIB_DIR", ".");
+
+   package Compiler is
+      for Default_Switches ("Ada") use Libav_Ada_Config.Ada_Compiler_Switches;
+
+      C_Switches := ("-O2", "-Wall", "-I" & Include_Dir);
+      case Libav_Ada_Config.Build_Profile is
+         when "development" => C_Switches := C_Switches & ("-g");
+         when others        => null;
+      end case;
+      for Default_Switches ("C") use C_Switches;
+   end Compiler;
+
+   package Linker is
+      --  Propagated to every executable that withs this library.
+      for Linker_Options use
+        ("-L" & Lib_Dir, "-lavformat", "-lavcodec", "-lswscale", "-lavutil");
+   end Linker;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
+
+   package Install is
+      for Artifacts (".") use ("share");
+   end Install;
+
+end Libav_Ada;

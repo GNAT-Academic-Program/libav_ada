@@ -1,0 +1,39 @@
+name = "libav_ada"
+description = "Ada binding to FFmpeg libav* with a safe Decoder/Frame/Scaler surface"
+version = "0.1.0"
+
+authors = ["Olivier Henley"]
+maintainers = ["Olivier Henley <henley@adacore.com>"]
+maintainers-logins = ["ohenley"]
+licenses = "Apache-2.0"
+website = "https://github.com/GNAT-Academic-Program/libav_ada"
+tags = ["ffmpeg", "libav", "video", "decoding", "binding", "multimedia"]
+
+long-description = """
+Ada binding to FFmpeg's libavformat, libavcodec, libswscale and libavutil.
+
+Three tiers:
+
+* `Libav.Raw`  : direct `pragma Import` of the libav C functions, opaque pointers.
+* `Libav.Shim` : the few things a binding cannot import (struct fields, macros),
+                 served by a 30-line C file compiled with the crate.
+* `Libav.Decoding`, `Libav.Frames`, `Libav.Scaling` : the Ada surface.
+                 Limited controlled types own every libav object; no pointer
+                 reaches user code.
+
+System requirement: FFmpeg development libraries, major 5, 6 or 7.
+See README for per-OS install and the gotchas.
+"""
+
+project-files = ["libav_ada.gpr"]
+
+[gpr-externals]
+LIBAV_ADA_LIBRARY_TYPE = ["static", "relocatable", "static-pic"]
+LIBAV_INCLUDE_DIR = ""
+LIBAV_LIB_DIR = ""
+
+[build-switches]
+"*".style_checks = "no"
+development.ada_version = "Ada2022"
+validation.ada_version = "Ada2022"
+release.ada_version = "Ada2022"
